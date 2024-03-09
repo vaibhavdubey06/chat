@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Web Application</title>
+</head>
+<body>
+  <h1>Chatbot Web Application</h1>
+  <textarea id="userInput" placeholder="Type your message..."></textarea>
+  <button onclick="sendMessage()">Send</button>
+  <div id="chatHistory"></div>
+
+  <script>
+    async function sendMessage() {
+      const userInput = document.getElementById('userInput').value;
+
+      const chatHistoryElement = document.getElementById('chatHistory');
+      const previousChatHistory = JSON.parse(chatHistoryElement.textContent || '[]');
+
+      const response = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userInput, chatHistory: previousChatHistory }),
+      });
+
+      const result = await response.json();
+      const updatedChatHistory = result.updatedChatHistory;
+
+      // Display the chat history
+      chatHistoryElement.textContent = JSON.stringify(updatedChatHistory, null, 2);
+
+      // Display the response to the user
+      alert(result.response);
+    }
+  </script>
+</body>
+</html>
